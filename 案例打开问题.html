@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>测试浏览器对WebGL支持状况</title>
+  <link href="http://www.yanhuangxueyuan.com/style.css" rel="stylesheet" type="text/css">
+  <!-- markdown样式影响了header的布局 -->
+  <link href="http://www.yanhuangxueyuan.com/markdown.css" rel="stylesheet" type="text/css">
+  <style>
+body {
+  padding: 0px;
+  margin: 0px;
+  background-color: #f6f6f6;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+
+}
+
+a:hover {
+  opacity: 0.7;
+}
+  </style>
+</head>
+
+<body>
+  <!--导航栏-->
+  <!-- position: fixed; -->
+  <nav style="height: 56px;background-color:#333333;margin-bottom: 0px;width: 100%;top: 0px;z-index: 99">
+<!-- background-color:#ff0000; height:48px;-->
+<div style="background-color:#ff0000;margin: auto;width: 1200px;padding:0px;">
+  <img src="http://www.yanhuangxueyuan.com/favicon.png" alt="WebGL教程_Three.js教程_郭隆邦技术博客" width="40px" height="40px" style="display: block;float: left;margin-top: 8px">
+  <a class="nav_hover nav_a" href="http://www.yanhuangxueyuan.com/" style="margin-left: 0px;font-family: '楷体';font-size: 20px;margin-top: 13px">郭隆邦_技术博客</a>
+
+</div>
+
+  </nav>
+  <div class="" style="padding:10px;background-color:#ffffff;margin: auto;width: 770px;margin-top: 23px;">
+    <h1 id="-three-js-">打开预览Three.js案例(跨域问题)</h1>
+    <p>不需要加载外部贴图和模型文件的three.js案例，可以直接使用浏览器打开.html案例文件，通常一个threejs项目案例往往都会加载一些外部模型，因此打开threejs案例要搭建一个本地的静态服务器，否则的话，threejs案例无法正常打开，浏览器控制台会提示<a href="http://www.yanhuangxueyuan.com/three.js_course/longword/crossdomain.html">跨域问题</a>。</p>
+    <p>如果你知道怎么搭建本地静态服务器，自己用任何方式搭建都可以。如果不了解的话，建议使用nodejs去快速搭建一个本地静态服务器，对于一个WebGL工程师或前端工程师来说，肯定是要学习Nodejs的。</p>
+    <h3 id="nodejs-">Nodejs本地静态服务器</h3>
+    <p>使用Nodejs搭建本地静态服务器很简单，首先是你要先百度Nodejs安装的相关文章，先在你的电脑上安装配置好Nodejs，熟悉下NPM的使用，然后使用npm执行<code>npm install -g live-server</code>安装<code>live-server</code>模块，如果你想通过安装好的<code>live-server</code>模块开启一个静态服务器，打开命令行，进入threejs案例所在的文件目录，然后执行<code>live-server</code>命令就可以。</p>
+    <p>通过浏览器访问<code>http://localhost:8080</code>或<code>http://127.0.0.1:8080</code>地址，找到threejs案例的.html文件直接打开就可以看到三维场景渲染效果。</p>
+    <h3 id="-">开发调试-热更新</h3>
+    <p>在学习threejs的过程中，往往需要频繁的代码测试，查看threejs代码的渲染效果。这时候你肯定希望代码修改之后，threejs渲染效果立即热更新。</p>
+    <p>如果通过<code>live-server</code>模块搭建的本地静态服务器，你可以实现代码的热加载。也就是说你修改一段代码，然后保存.html代码文件，.html对应的threejs案例就会重新渲染。</p>
+
+  </div>
+
+</body>
+
+</html>

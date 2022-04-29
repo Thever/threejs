@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>源码对应电子书:百度"three.js 郭隆邦"</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+  </style>
+  <!--引入three.js三维引擎-->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+  <!-- 引入threejs扩展控件OrbitControls.js -->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <script>
+    /**
+     * 创建场景对象Scene
+     */
+    var scene = new THREE.Scene();
+    /**
+     * 创建网格模型
+     */
+    // 河南边界轮廓坐标
+    let arr = [
+      [110.3906, 34.585],
+      [110.8301, 34.6289],
+      [111.1816, 34.8047],
+      [111.5332, 34.8486],
+      [111.7969, 35.0684],
+      [112.0605, 35.0684],
+      [112.0605, 35.2881],
+      [112.7637, 35.2002],
+      [113.1152, 35.332],
+      [113.6426, 35.6836],
+      [113.7305, 36.3428],
+      [114.873, 36.123],
+      [114.9609, 36.0791],
+      [115.1367, 36.2109],
+      [115.3125, 36.0791],
+      [115.4883, 36.167],
+      [115.3125, 35.8154],
+      [116.1035, 36.0791],
+      [115.4883, 35.7275],
+      [115.2246, 35.4199],
+      [115.0488, 35.376],
+      [114.7852, 35.0684],
+      [115.4004, 34.8486],
+      [115.5762, 34.585],
+      [116.1914, 34.585],
+      [116.1914, 34.4092],
+      [116.543, 34.2773],
+      [116.6309, 33.9258],
+      [116.1914, 33.7061],
+      [116.0156, 33.9697],
+      [115.6641, 34.0576],
+      [115.5762, 33.9258],
+      [115.5762, 33.6621],
+      [115.4004, 33.5303],
+      [115.3125, 33.1787],
+      [114.873, 33.1348],
+      [114.873, 33.0029],
+      [115.1367, 32.8711],
+      [115.2246, 32.6074],
+      [115.5762, 32.4316],
+      [115.8398, 32.5195],
+      [115.9277, 31.7725],
+      [115.4883, 31.6846],
+      [115.4004, 31.4209],
+      [115.2246, 31.4209],
+      [115.1367, 31.5967],
+      [114.7852, 31.4648],
+      [114.6094, 31.5527],
+      [114.5215, 31.7725],
+      [114.1699, 31.8604],
+      [113.9941, 31.7725],
+      [113.8184, 31.8604],
+      [113.7305, 32.4316],
+      [113.4668, 32.2998],
+      [113.2031, 32.4316],
+      [112.3242, 32.3438],
+      [111.5332, 32.6074],
+      [111.0059, 33.2666],
+      [111.0059, 33.5303],
+      [110.6543, 33.8379],
+      [110.6543, 34.1455],
+      [110.4785, 34.2334],
+      [110.3906, 34.585]
+    ]
+    var points = [];
+    // 转化为Vector2构成的顶点数组
+    arr.forEach(elem => {
+      points.push(new THREE.Vector2(elem[0],elem[1]))
+    });
+    // 样条曲线生成更多的点
+    var SplineCurve = new THREE.SplineCurve(points)
+    var shape = new THREE.Shape(SplineCurve.getPoints(300));
+    // var shape = new THREE.Shape(points);
+    var geometry = new THREE.ShapeGeometry(shape);
+    geometry.center();//几何体居中
+    geometry.scale(30,30,30);//几何体缩放
+    var material = new THREE.MeshPhongMaterial({
+      color: 0x0000ff,
+      side: THREE.DoubleSide //两面可见
+    }); //材质对象
+    var mesh = new THREE.Mesh(geometry, material); //网格模型对象
+    scene.add(mesh); //网格模型添加到场景中
+    /**
+     * 光源设置
+     */
+    //点光源
+    var point = new THREE.PointLight(0xffffff);
+    point.position.set(400, 200, 300); //点光源位置
+    scene.add(point); //点光源添加到场景中
+    //环境光
+    var ambient = new THREE.AmbientLight(0x444444);
+    scene.add(ambient);
+    /**
+     * 相机设置
+     */
+    var width = window.innerWidth; //窗口宽度
+    var height = window.innerHeight; //窗口高度
+    var k = width / height; //窗口宽高比
+    var s = 150; //三维场景显示范围控制系数，系数越大，显示的范围越大
+    //创建相机对象
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    // camera.position.set(200, 300, 200); //设置相机位置
+    camera.position.set(0, 0, 200); //设置相机位置
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+    /**
+     * 创建渲染器对象
+     */
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height); //设置渲染区域尺寸
+    renderer.setClearColor(0xb9d3ff, 1); //设置背景颜色
+    document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+
+    // 渲染函数
+    function render() {
+      renderer.render(scene, camera); //执行渲染操作
+    }
+    render();
+    //创建控件对象  相机对象camera作为参数   控件可以监听鼠标的变化，改变相机对象的属性
+    var controls = new THREE.OrbitControls(camera,renderer.domElement);
+    //监听鼠标事件，触发渲染函数，更新canvas画布渲染效果
+    controls.addEventListener('change', render);
+  </script>
+
+</body>
+
+</html>

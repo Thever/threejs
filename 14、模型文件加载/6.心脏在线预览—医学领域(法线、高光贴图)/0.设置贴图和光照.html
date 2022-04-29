@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>源码对应电子书:百度"three.js 郭隆邦"</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+  </style>
+  <!--引入three.js三维引擎-->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+  <!-- 引入threejs扩展控件OrbitControls.js -->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/controls/OrbitControls.js"></script>
+  <!-- 引入obj模型加载库OBJLoader.js -->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/loaders/OBJLoader.js"></script>
+</head>
+
+<body>
+  <script>
+    /**
+     * 创建场景对象Scene
+     */
+    var scene = new THREE.Scene();
+    /**
+     * OBJ文件加载  只加载obj文件中的几何信息，不加载材质文件.mtl
+     */
+    var loader = new THREE.OBJLoader();
+    // 没有材质文件，系统自动设置Phong网格材质
+    var mesh = null; //声明一个网格模型变量
+    loader.load('./heart/model.obj', function(obj) {
+      // 控制台查看返回结构：包含一个网格模型Mesh的组Group
+      console.log(obj);
+      scene.add(obj);
+      mesh = obj.children[0]; //获得心脏网格模型
+      mesh.scale.set(10, 10, 10); //网格模型缩放
+      // 创建一个纹理加载器
+      var textureLoader = new THREE.TextureLoader();
+
+      // // 加载颜色纹理
+      var texture = textureLoader.load('./heart/color.png');
+      mesh.material.map = texture;
+
+      // // 加载法线贴图，表面细节更丰富
+      var textureNormal = textureLoader.load('./heart/normal.png');
+      mesh.material.normalMap = textureNormal
+      // 设置深浅程度
+      mesh.material.normalScale.set(1.5, 1.5)
+
+      // 设置高光贴图，一个网格模型不同的区域反射光线的能力不同
+      var textureSpecular = textureLoader.load('./heart/Specular.png');
+      mesh.material.specularMap = textureSpecular;
+      mesh.material.specular.set(0xffffff);// 高光反射颜色
+      mesh.material.shininess = 100;// 高光高亮程度，默认30
+
+      // 设置环境贴图，反射周围环境，渲染更逼真
+      var textureCube = new THREE.CubeTextureLoader()
+        .setPath('环境贴图/')
+        .load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg']);
+      mesh.material.envMap = textureCube;
+    })
+    /**
+     * 光源设置
+     */
+    //点光源
+    var point = new THREE.PointLight(0xffffff, 0.3);
+    point.position.set(400, 200, 300); //点光源位置
+    scene.add(point); //点光源添加到场景中
+    // 环境光
+    var ambient = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambient);
+    // 方向光1
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(400, 200, 300);
+    scene.add(directionalLight);
+    // 方向光2
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(-400, -200, -300);
+    scene.add(directionalLight);
+
+
+    // var ambient = new THREE.AmbientLight(0x666666);
+    // scene.add(ambient);
+    // var directionalLight = new THREE.DirectionalLight( 0x666666, 0.5);
+    // directionalLight.position.set( 400, 200, 300);
+    // scene.add( directionalLight );
+    /**
+     * 相机设置
+     */
+    var width = window.innerWidth; //窗口宽度
+    var height = window.innerHeight; //窗口高度
+    var k = width / height; //窗口宽高比
+    var s = 150; //三维场景显示范围控制系数，系数越大，显示的范围越大
+    //创建相机对象
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    camera.position.set(200, 300, 200); //设置相机位置
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+    /**
+     * 创建渲染器对象
+     */
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height); //设置渲染区域尺寸
+    // renderer.setClearColor(0xb9d3ff, 1); //设置背景颜色
+    document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+
+    // 渲染函数
+    function render() {
+      renderer.render(scene, camera); //执行渲染操作
+      requestAnimationFrame(render); //请求再次执行渲染函数render，渲染下一帧
+      // if(mesh){
+      //   mesh.rotateY(0.01);//每次绕y轴旋转0.01弧度
+      // }
+    }
+    render();
+    //创建控件对象  相机对象camera作为参数   控件可以监听鼠标的变化，改变相机对象的属性
+    var controls = new THREE.OrbitControls(camera,renderer.domElement);
+  </script>
+
+</body>
+
+</html>

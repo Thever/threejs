@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>源码对应电子书:百度"three.js 郭隆邦"</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+  </style>
+  <!--引入three.js三维引擎-->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+  <!-- 引入threejs扩展控件OrbitControls.js -->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <script>
+    /**
+     * 创建场景对象Scene
+     */
+    var scene = new THREE.Scene();
+    /**
+     * 一个精灵模型对象表示一个城市的位置和数据
+     */
+    // 加载一个背景透明的圆形贴图，矩形精灵显示为圆形效果
+    var texture = new THREE.TextureLoader().load("sprite.png");
+    // 创建组对象，包含所有精灵对象
+    let group = new THREE.Group();
+    // 文件加载对象
+    var loader = new THREE.FileLoader().setResponseType('json');
+    // 加载PM2.5数据
+    loader.load('数据.json', function(data) {
+      //遍历数据
+      data.forEach(elem => {
+        // 精灵材质
+        var spriteMaterial = new THREE.SpriteMaterial({
+          map: texture, //设置精灵纹理贴图
+          transparent: true,
+          opacity: 0.5,
+        });
+        // 创建精灵模型对象
+        var sprite = new THREE.Sprite(spriteMaterial);
+        group.add(sprite);
+        // 控制精灵大小   使用PM2.5大小设置精灵模型的大小
+        // 注意适当缩放pm2.5大小,以便得到更好的显示效果
+        var k = elem.value / 200
+        sprite.scale.set(k, k, 1);
+        //获得城市坐标设置精灵模型对象的位置
+        sprite.position.set(elem.coordinate[0], elem.coordinate[1], 0)
+      });
+      // 中国城市坐标整体的几何中心不在坐标原点，需要适当的平移
+      group.position.set(-110, -30, 0);
+      scene.add(group);//把精灵群组插入场景中
+    })
+
+    // 坐标系辅助显示
+    var axesHelper = new THREE.AxesHelper(200);
+    // scene.add(axesHelper);
+    /**
+     * 光源设置
+     */
+    //点光源
+    var point = new THREE.PointLight(0xffffff);
+    point.position.set(400, 200, 300); //点光源位置
+    scene.add(point); //点光源添加到场景中
+    //环境光
+    var ambient = new THREE.AmbientLight(0x888888);
+    scene.add(ambient);
+    /**
+     * 相机设置
+     */
+    var width = window.innerWidth; //窗口宽度
+    var height = window.innerHeight; //窗口高度
+    var k = width / height; //窗口宽高比
+    var s = 25; //控制所有sprite的分布范围
+    //创建相机对象
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    // camera.position.set(200, 300, 200); //设置相机位置
+    camera.position.set(0, 0, 200); //数据平面可视化，沿着z轴观察
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+    /**
+     * 创建渲染器对象
+     */
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height); //设置渲染区域尺寸
+    // renderer.setClearColor(0xb9d3ff, 1); //设置背景颜色
+    document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+
+    // 渲染函数
+    function render() {
+      renderer.render(scene, camera); //执行渲染操作
+      requestAnimationFrame(render);//请求再次执行渲染函数render，渲染下一帧
+    }
+    render();
+    //创建控件对象  相机对象camera作为参数   控件可以监听鼠标的变化，改变相机对象的属性
+    var controls = new THREE.OrbitControls(camera,renderer.domElement);
+    // 禁止旋转操作
+    controls.enableRotate = false;
+  </script>
+
+</body>
+
+</html>

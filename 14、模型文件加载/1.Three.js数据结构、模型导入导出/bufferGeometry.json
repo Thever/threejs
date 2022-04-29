@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "BufferGeometry",
+    "generator": "BufferGeometry.toJSON"
+  },
+  "uuid": "05F40C12-B679-48F9-AB9A-01B780930A80",
+  "type": "BufferGeometry",
+  "data": {
+    "attributes": {
+      "position": {
+        "itemSize": 3,
+        "type": "Float32Array",
+        "array": [0, 0, 0, 80, 0, 0, 80, 80, 0, 0, 80, 0],
+        "normalized": false
+      },
+      "normal": {
+        "itemSize": 3,
+        "type": "Float32Array",
+        "array": [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        "normalized": false
+      }
+    },
+    "index": {
+      "type": "Uint16Array",
+      "array": [0, 1, 2, 0, 2, 3]
+    }
+  }
+}

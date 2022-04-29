@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>源码对应电子书:百度"three.js 郭隆邦"</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+  </style>
+  <!--引入three.js三维引擎-->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+</head>
+
+<body>
+  <script>
+    // 非位置音频可用于不考虑位置的背景音乐
+
+    // 创建一个监听者
+    var listener = new THREE.AudioListener();
+    // camera.add( listener );
+    // 创建一个非位置音频对象  用来控制播放
+    var audio = new THREE.Audio(listener);
+    // 创建一个音频加载器对象
+    var audioLoader = new THREE.AudioLoader();
+    // 加载音频文件，返回一个音频缓冲区对象作为回调函数参数
+    audioLoader.load('中国人.mp3', function(AudioBuffer) {
+      // console.log(AudioBuffer)
+      // 音频缓冲区对象关联到音频对象audio
+      audio.setBuffer(AudioBuffer);
+      audio.setLoop(true); //是否循环
+      audio.setVolume(0.5); //音量
+      // 播放缓冲区中的音频数据
+      audio.play(); //play播放、stop停止、pause暂停
+    });
+  </script>
+
+</body>
+
+</html>

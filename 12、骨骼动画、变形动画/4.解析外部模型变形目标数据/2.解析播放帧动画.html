@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>源码对应电子书:百度"three.js 郭隆邦"</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+  </style>
+  <!--引入three.js三维引擎-->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+  <!-- 引入threejs扩展控件OrbitControls.js -->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <script>
+    /**
+     * 创建场景对象Scene
+     */
+    var scene = new THREE.Scene();
+    /**
+     * 解析变形目标数据
+     */
+    var loader = new THREE.JSONLoader(); //创建加载器
+    var mixer = null; //声明一个混合器变量
+    loader.load("./鸟/flamingo.json", function(geometry) {
+      // console.log(geometry);
+      var material = new THREE.MeshPhongMaterial({
+        morphTargets: true,
+        vertexColors: THREE.FaceColors,
+      });
+      // 通过平均面法线来计算顶点法线，效果更光滑
+      geometry.computeVertexNormals();
+      var mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh); //插入到场景中
+
+      // 创建一个混合器，播放网格模型模型的变形动画
+      mixer = new THREE.AnimationMixer(mesh);
+      // geometry.animations[0]：获得剪辑对象clip
+      var AnimationAction=mixer.clipAction(geometry.animations[0]);
+      // AnimationAction.timeScale = 0.5; //默认1，可以调节播放速度
+      // AnimationAction.loop = THREE.LoopOnce; //不循环播放
+      // AnimationAction.clampWhenFinished=true;//暂停在最后一帧播放的状态
+      AnimationAction.play();//播放动画
+    })
+
+    //三维坐标系辅助显示
+    var AxesHelper = new THREE.AxesHelper(600);
+    scene.add(AxesHelper);
+    /**
+     * 光源设置
+     */
+    //点光源
+    var point = new THREE.PointLight(0xffffff);
+    point.position.set(400, 200, 300); //点光源位置
+    scene.add(point); //点光源添加到场景中
+    //环境光
+    var ambient = new THREE.AmbientLight(0x444444);
+    scene.add(ambient);
+    /**
+     * 相机设置
+     */
+    var width = window.innerWidth; //窗口宽度
+    var height = window.innerHeight; //窗口高度
+    var k = width / height; //窗口宽高比
+    var s = 150; //三维场景显示范围控制系数，系数越大，显示的范围越大
+    //创建相机对象
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    camera.position.set(200, 300, 200); //设置相机位置
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+    /**
+     * 创建渲染器对象
+     */
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height); //设置渲染区域尺寸
+    renderer.setClearColor(0xb9d3ff, 1); //设置背景颜色
+    document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+
+    // 创建一个时钟对象Clock
+    var clock = new THREE.Clock();
+    // 渲染函数
+    function render() {
+      renderer.render(scene, camera); //执行渲染操作
+      requestAnimationFrame(render); //请求再次执行渲染函数render，渲染下一帧
+
+      if (mixer !== null) {
+        //clock.getDelta()方法获得两帧的时间间隔
+        // 更新混合器相关的时间
+        mixer.update(clock.getDelta());
+      }
+    }
+    render();
+    //创建控件对象  相机对象camera作为参数   控件可以监听鼠标的变化，改变相机对象的属性
+    var controls = new THREE.OrbitControls(camera,renderer.domElement);
+  </script>
+
+</body>
+
+</html>

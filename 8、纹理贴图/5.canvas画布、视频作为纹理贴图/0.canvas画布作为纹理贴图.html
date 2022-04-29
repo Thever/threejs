@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>源码对应电子书:百度"three.js 郭隆邦"</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+  </style>
+  <!--引入three.js三维引擎-->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+  <!-- 引入threejs扩展控件OrbitControls.js -->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <script>
+    /**
+     * 创建场景对象Scene
+     */
+    var scene = new THREE.Scene();
+    var geometry = new THREE.PlaneGeometry(128, 32); //矩形平面
+    /**
+     * 创建一个canvas对象，并绘制一些轮廓
+     */
+    var canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 128;
+    var c = canvas.getContext('2d');
+    // 矩形区域填充背景
+    c.fillStyle = "#ff00ff";
+    c.fillRect(0, 0, 512, 128);
+    c.beginPath();
+    // 文字
+    c.beginPath();
+    c.translate(256, 64);
+    c.fillStyle = "#000000"; //文本填充颜色
+    c.font = "bold 48px 宋体"; //字体样式设置
+    c.textBaseline = "middle"; //文本与fillText定义的纵坐标
+    c.textAlign = "center"; //文本居中(以fillText定义的横坐标)
+    c.fillText("郭隆邦_技术博客", 0, 0);
+
+    // canvas画布对象作为CanvasTexture的参数重建一个纹理对象
+    // canvas画布可以理解为一张图片
+    var texture = new THREE.CanvasTexture(canvas);
+    // var texture = new THREE.Texture(canvas);
+    // texture.needsUpdate = true;
+    //打印纹理对象的image属性
+    // console.log(texture.image);
+    var material = new THREE.MeshPhongMaterial({
+      map: texture, // 设置纹理贴图
+    }); //材质对象Material
+    var mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+    scene.add(mesh); //网格模型添加到场景中
+    /**
+     * 光源设置
+     */
+    //点光源
+    var point = new THREE.PointLight(0xffffff);
+    point.position.set(400, 200, 300); //点光源位置
+    scene.add(point); //点光源添加到场景中
+    //环境光
+    var ambient = new THREE.AmbientLight(0xaaaaaa);
+    scene.add(ambient);
+    /**
+     * 相机设置
+     */
+    var width = window.innerWidth; //窗口宽度
+    var height = window.innerHeight; //窗口高度
+    var k = width / height; //窗口宽高比
+    var s = 150; //三维场景显示范围控制系数，系数越大，显示的范围越大
+    //创建相机对象
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    camera.position.set(200, 300, 200); //设置相机位置
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+    /**
+     * 创建渲染器对象
+     */
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height); //设置渲染区域尺寸
+    renderer.setClearColor(0xb9d3ff, 1); //设置背景颜色
+    document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+
+    // 渲染函数
+    function render() {
+      renderer.render(scene, camera); //执行渲染操作
+      requestAnimationFrame(render);
+    }
+    render();
+    //创建控件对象  相机对象camera作为参数   控件可以监听鼠标的变化，改变相机对象的属性
+    var controls = new THREE.OrbitControls(camera,renderer.domElement);
+    //监听鼠标事件，触发渲染函数，更新canvas画布渲染效果
+    controls.addEventListener('change', render);
+  </script>
+
+</body>
+
+</html>

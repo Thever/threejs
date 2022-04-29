@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>源码对应电子书:百度"three.js 郭隆邦"</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+  </style>
+  <!--引入three.js三维引擎-->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+  <!-- 引入threejs扩展控件OrbitControls.js -->
+  <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <script>
+    /**
+     * 创建场景对象Scene
+     */
+    var scene = new THREE.Scene();
+    /**
+     * 创建网格模型
+     */
+    // 立方体网格模型
+    var geometry1 = new THREE.BoxGeometry(100, 100, 100);
+    var material1 = new THREE.MeshLambertMaterial({
+      color: 0x0000ff
+    }); //材质对象Material
+    var mesh1 = new THREE.Mesh(geometry1, material1); //网格模型对象Mesh
+    scene.add(mesh1); //网格模型添加到场景中
+    mesh1.translateX(-150); //沿着x轴平移150
+    var mesh2 = new THREE.Mesh(geometry1, material1); //网格模型对象Mesh
+    scene.add(mesh2); //网格模型添加到场景中
+    mesh2.translateX(150); //沿着x轴平移150
+
+    // 辅助坐标系
+    var AxesHelper = new THREE.AxesHelper(250);
+    scene.add(AxesHelper);
+    /**
+     * 光源设置
+     */
+    // 聚光光源
+    var spotLight = new THREE.SpotLight(0xffffff);
+    // 设置聚光光源位置
+    spotLight.position.set(200, 200, 200);
+    // 聚光灯光源指向网格模型mesh2
+    spotLight.target = mesh2;
+    // 设置聚光光源发散角度
+    spotLight.angle = Math.PI / 6
+    // scene.add(spotLight);//光对象添加到scene场景中
+
+    // 方向光
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    // 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
+    // 注意：位置属性在这里不代表方向光的位置，你可以认为方向光没有位置
+    directionalLight.position.set(80, 100, 50);
+    // 方向光指向对象，可以不设置，默认的位置是0,0,0
+    directionalLight.target = mesh2;
+    scene.add(directionalLight);
+    /**
+     * 相机设置
+     */
+    var width = window.innerWidth; //窗口宽度
+    var height = window.innerHeight; //窗口高度
+    var k = width / height; //窗口宽高比
+    var s = 300; //三维场景显示范围控制系数，系数越大，显示的范围越大
+    //创建相机对象
+    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    camera.position.set(200, 300, 200); //设置相机位置
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+    /**
+     * 创建渲染器对象
+     */
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height); //设置渲染区域尺寸
+    renderer.setClearColor(0x666666, 1); //设置背景颜色
+    document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+
+    // 渲染函数
+    function render() {
+      renderer.render(scene, camera); //执行渲染操作
+      requestAnimationFrame(render); //请求再次执行渲染函数render，渲染下一帧
+    }
+    render();
+    var controls = new THREE.OrbitControls(camera,renderer.domElement); //创建控件对象
+  </script>
+
+</body>
+
+</html>
